@@ -1,12 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:wallpaper_generator_pexels_app/screens/category_screen.dart';
 
 class CategoryTile extends StatelessWidget {
-  const CategoryTile({Key? key}) : super(key: key);
+  //**
+  final String categoryName;
+  final String categoryImgSrc;
+
+  const CategoryTile({
+    Key? key,
+    required this.categoryName,
+    required this.categoryImgSrc,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CategoryScreen(
+              categoryName: categoryName,
+              categoryImageUrl: categoryImgSrc,
+            ),
+          ),
+        );
+      },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 10.0),
         child: Stack(
@@ -17,7 +36,7 @@ class CategoryTile extends StatelessWidget {
                 height: 50.0,
                 width: 100.0,
                 fit: BoxFit.cover,
-                'https://images.pexels.com/photos/1719648/pexels-photo-1719648.jpeg?auto=compress&cs=tinysrgb&w=600',
+                categoryImgSrc,
               ),
             ),
             Container(
@@ -28,13 +47,13 @@ class CategoryTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14.0),
               ),
             ),
-            const Positioned(
+            Positioned(
               left: 25.0,
               top: 10.0,
               child: Text(
-                'Cars',
+                categoryName,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'poppins_bold',
                   letterSpacing: 1.2,
                   fontSize: 17.0,

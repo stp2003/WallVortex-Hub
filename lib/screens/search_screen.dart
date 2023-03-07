@@ -5,6 +5,8 @@ import 'package:wallpaper_generator_pexels_app/models/photos_model.dart';
 import 'package:wallpaper_generator_pexels_app/widgets/app_name.dart';
 import 'package:wallpaper_generator_pexels_app/widgets/search_bar.dart';
 
+import 'image_full_screen.dart';
+
 class SearchScreen extends StatefulWidget {
   //**
   final String query;
@@ -69,20 +71,35 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                   itemCount: searchResults.length,
                   itemBuilder: (context, index) => GridTile(
-                    child: Container(
-                      width: 50.0,
-                      height: 800.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20.0),
-                        color: bgColor,
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20.0),
-                        child: Image.network(
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ImageFullScreen(
+                              imgUrl: searchResults[index].imgSrc,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Hero(
+                        tag: searchResults[index].imgSrc,
+                        child: Container(
                           width: 50.0,
                           height: 800.0,
-                          fit: BoxFit.cover,
-                          searchResults[index].imgSrc,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20.0),
+                            color: bgColor,
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20.0),
+                            child: Image.network(
+                              width: 50.0,
+                              height: 800.0,
+                              fit: BoxFit.cover,
+                              searchResults[index].imgSrc,
+                            ),
+                          ),
                         ),
                       ),
                     ),

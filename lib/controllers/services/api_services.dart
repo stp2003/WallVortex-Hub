@@ -1,13 +1,15 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:http/http.dart' as http;
+import 'package:wallpaper_generator_pexels_app/models/category_model.dart';
 import 'package:wallpaper_generator_pexels_app/models/photos_model.dart';
 
 class ApiServices {
-  //** list of trending wallpaper ->
+  //** list of wallpaper ->
   static List<PhotosModel> trendingWallpaper = [];
   static List<PhotosModel> searchWallpaperList = [];
-  static List<PhotosModel> categoryWallpaperList = [];
+  static List<CategoryModel> categoryWallpaperList = [];
 
   //?? get trending wallpaper ->
   static Future<List<PhotosModel>> getTrendingWallpaper() async {
@@ -60,5 +62,39 @@ class ApiServices {
       },
     );
     return searchWallpaperList;
+  }
+
+  //?? category ->
+  static List<CategoryModel> getCategoriesList() {
+    List categoryName = [
+      "Cars",
+      "Nature",
+      "Bikes",
+      "Flowers",
+      "Street",
+      "Space",
+      "Mountains",
+      "City",
+    ];
+
+    categoryWallpaperList.clear();
+    categoryName.forEach(
+      (catName) async {
+        final random = Random();
+
+        PhotosModel photoModel =
+            (await searchWallpapers(catName))[0 + random.nextInt(11 - 0)];
+        print("IMG SRC IS HERE");
+        print(photoModel.imgSrc);
+        categoryWallpaperList.add(
+          CategoryModel(
+            categoryImageUrl: photoModel.imgSrc,
+            categoryName: catName,
+          ),
+        );
+      },
+    );
+
+    return categoryWallpaperList;
   }
 }

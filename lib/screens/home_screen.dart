@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:wallpaper_generator_pexels_app/constants/colors.dart';
 import 'package:wallpaper_generator_pexels_app/controllers/services/api_services.dart';
+import 'package:wallpaper_generator_pexels_app/models/category_model.dart';
 import 'package:wallpaper_generator_pexels_app/models/photos_model.dart';
+import 'package:wallpaper_generator_pexels_app/screens/image_full_screen.dart';
 import 'package:wallpaper_generator_pexels_app/widgets/app_name.dart';
 import 'package:wallpaper_generator_pexels_app/widgets/category_tile.dart';
 import 'package:wallpaper_generator_pexels_app/widgets/search_bar.dart';
@@ -16,11 +18,26 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   //**
   late List<PhotosModel> trendingWallList = [];
+  late List<CategoryModel> categoryModelList = [];
+
+  bool isLoading = true;
+
+  //?? category ->
+  getCategoryDetails() async {
+    categoryModelList = await ApiServices.getCategoriesList();
+    print("GETTTING CAT MOD LIST");
+    print(categoryModelList);
+    setState(() {
+      categoryModelList = categoryModelList;
+    });
+  }
 
   //?? get trending wallpapers ->
   getTrendingWallpapers() async {
     trendingWallList = await ApiServices.getTrendingWallpaper();
-    setState(() {});
+    setState(() {
+      // isLoading = false;
+    });
   }
 
   //?? init state ->
@@ -28,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     getTrendingWallpapers();
+    getCategoryDetails();
   }
 
   //?? build ->
@@ -61,8 +79,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: size.width,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: 30,
-                  itemBuilder: (context, index) => const CategoryTile(),
+                  itemCount: categoryModelList.length,
+                  itemBuilder: (context, index) => CategoryTile(
+                    categoryName: categoryModelList[index].categoryName,
+                    categoryImgSrc: categoryModelList[index].categoryImageUrl,
+                  ),
                 ),
               ),
             ),
@@ -83,20 +104,35 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 itemCount: trendingWallList.length,
                 itemBuilder: (context, index) => GridTile(
-                  child: Container(
-                    width: 50.0,
-                    height: 800.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20.0),
-                      color: bgColor,
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20.0),
-                      child: Image.network(
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ImageFullScreen(
+                            imgUrl: trendingWallList[index].imgSrc,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Hero(
+                      tag: trendingWallList[index].imgSrc,
+                      child: Container(
                         width: 50.0,
                         height: 800.0,
-                        fit: BoxFit.cover,
-                        trendingWallList[index].imgSrc,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20.0),
+                          color: bgColor,
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20.0),
+                          child: Image.network(
+                            width: 50.0,
+                            height: 800.0,
+                            fit: BoxFit.cover,
+                            trendingWallList[index].imgSrc,
+                          ),
+                        ),
                       ),
                     ),
                   ),

@@ -1,9 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:wallpaper_generator_pexels_app/constants/colors.dart';
+import 'package:wallpaper_generator_pexels_app/controllers/services/api_services.dart';
+import 'package:wallpaper_generator_pexels_app/models/photos_model.dart';
 import 'package:wallpaper_generator_pexels_app/widgets/app_name.dart';
 
-class CategoryScreen extends StatelessWidget {
-  const CategoryScreen({Key? key}) : super(key: key);
+import 'image_full_screen.dart';
 
+class CategoryScreen extends StatefulWidget {
+  //**
+  final String categoryName;
+  final String categoryImageUrl;
+
+  const CategoryScreen({
+    Key? key,
+    required this.categoryName,
+    required this.categoryImageUrl,
+  }) : super(key: key);
+
+  @override
+  State<CategoryScreen> createState() => _CategoryScreenState();
+}
+
+class _CategoryScreenState extends State<CategoryScreen> {
+  //**
+  late List<PhotosModel> categoryResults = [];
+
+  //** for loading ->
+  bool isLoading = true;
+
+  //?? for getting category ->
+  getCategories() async {
+    categoryResults = await ApiServices.searchWallpapers(
+      widget.categoryName,
+    );
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    getCategories();
+    super.initState();
+  }
+
+  //?? build ->
   @override
   Widget build(BuildContext context) {
     //** media query ->
@@ -30,7 +72,7 @@ class CategoryScreen extends StatelessWidget {
                       height: 150.0,
                       width: size.width,
                       fit: BoxFit.cover,
-                      'https://images.pexels.com/photos/1287145/pexels-photo-1287145.jpeg?auto=compress&cs=tinysrgb&w=600',
+                      widget.categoryImageUrl,
                     ),
                   ),
                   Container(
@@ -45,8 +87,8 @@ class CategoryScreen extends StatelessWidget {
                     left: 65.0,
                     top: 30.0,
                     child: Column(
-                      children: const [
-                        Text(
+                      children: [
+                        const Text(
                           "Category",
                           textAlign: TextAlign.center,
                           style: TextStyle(
@@ -57,9 +99,9 @@ class CategoryScreen extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          'widget.catName',
+                          widget.categoryName,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 30.0,
                             color: Colors.white,
                             letterSpacing: 1.2,
@@ -86,22 +128,37 @@ class CategoryScreen extends StatelessWidget {
                   crossAxisSpacing: 12.0,
                   mainAxisSpacing: 10.0,
                 ),
-                itemCount: 10,
+                itemCount: categoryResults.length,
                 itemBuilder: (context, index) => GridTile(
-                  child: Container(
-                    width: 50.0,
-                    height: 800.0,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20.0),
-                      color: Colors.amberAccent,
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20.0),
-                      child: Image.network(
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ImageFullScreen(
+                            imgUrl: categoryResults[index].imgSrc,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Hero(
+                      tag: categoryResults[index].imgSrc,
+                      child: Container(
                         width: 50.0,
                         height: 800.0,
-                        fit: BoxFit.cover,
-                        'https://images.pexels.com/photos/1719648/pexels-photo-1719648.jpeg?auto=compress&cs=tinysrgb&w=600',
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20.0),
+                          color: bgColor,
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20.0),
+                          child: Image.network(
+                            width: 50.0,
+                            height: 800.0,
+                            fit: BoxFit.cover,
+                            categoryResults[index].imgSrc,
+                          ),
+                        ),
                       ),
                     ),
                   ),
