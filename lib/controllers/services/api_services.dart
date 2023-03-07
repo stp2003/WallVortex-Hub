@@ -73,7 +73,7 @@ class ApiServices {
       "Flowers",
       "Street",
       "Space",
-      "Mountains",
+      "Mountain",
       "City",
     ];
 

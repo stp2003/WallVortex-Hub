@@ -39,24 +39,26 @@ class CategoryTile extends StatelessWidget {
                 categoryImgSrc,
               ),
             ),
-            Container(
-              height: 50.0,
-              width: 100.0,
-              decoration: BoxDecoration(
-                color: Colors.black12,
-                borderRadius: BorderRadius.circular(14.0),
+            Center(
+              child: Container(
+                height: 50.0,
+                width: 100.0,
+                decoration: BoxDecoration(
+                  color: Colors.black12,
+                  borderRadius: BorderRadius.circular(14.0),
+                ),
               ),
             ),
             Positioned(
-              left: 25.0,
-              top: 10.0,
+              left: 10.0,
+              top: 12.0,
               child: Text(
                 categoryName,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontFamily: 'poppins_bold',
-                  letterSpacing: 1.2,
-                  fontSize: 17.0,
+                  letterSpacing: 0.6,
+                  fontSize: 15.0,
                   color: Colors.white,
                 ),
               ),

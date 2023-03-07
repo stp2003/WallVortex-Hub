@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
   getTrendingWallpapers() async {
     trendingWallList = await ApiServices.getTrendingWallpaper();
     setState(() {
-      // isLoading = false;
+      isLoading = false;
     });
   }
 
@@ -61,87 +61,93 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
 
       //?? body ->
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            //** search bar ->
-            SearchBar(),
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  //** search bar ->
+                  SearchBar(),
 
-            //** list view builder for category ->
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 8.0,
-                right: 8.0,
-                top: 20.0,
-              ),
-              child: SizedBox(
-                height: 60.0,
-                width: size.width,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: categoryModelList.length,
-                  itemBuilder: (context, index) => CategoryTile(
-                    categoryName: categoryModelList[index].categoryName,
-                    categoryImgSrc: categoryModelList[index].categoryImageUrl,
+                  //** list view builder for category ->
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 8.0,
+                      right: 8.0,
+                      top: 20.0,
+                    ),
+                    child: SizedBox(
+                      height: 60.0,
+                      width: size.width,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: categoryModelList.length,
+                        itemBuilder: (context, index) => CategoryTile(
+                          categoryName: categoryModelList[index].categoryName,
+                          categoryImgSrc:
+                              categoryModelList[index].categoryImageUrl,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
 
-            const SizedBox(height: 20.0),
+                  const SizedBox(height: 20.0),
 
-            //?? grid view for showing wallpaper ->
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 13.0),
-              height: 590.0,
-              child: GridView.builder(
-                physics: const BouncingScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisExtent: 400.0,
-                  crossAxisSpacing: 15.0,
-                  mainAxisSpacing: 10.0,
-                ),
-                itemCount: trendingWallList.length,
-                itemBuilder: (context, index) => GridTile(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ImageFullScreen(
-                            imgUrl: trendingWallList[index].imgSrc,
-                          ),
-                        ),
-                      );
-                    },
-                    child: Hero(
-                      tag: trendingWallList[index].imgSrc,
-                      child: Container(
-                        width: 50.0,
-                        height: 800.0,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20.0),
-                          color: bgColor,
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20.0),
-                          child: Image.network(
-                            width: 50.0,
-                            height: 800.0,
-                            fit: BoxFit.cover,
-                            trendingWallList[index].imgSrc,
+                  //?? grid view for showing wallpaper ->
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 13.0),
+                    height: 590.0,
+                    child: GridView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisExtent: 400.0,
+                        crossAxisSpacing: 15.0,
+                        mainAxisSpacing: 10.0,
+                      ),
+                      itemCount: trendingWallList.length,
+                      itemBuilder: (context, index) => GridTile(
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ImageFullScreen(
+                                  imgUrl: trendingWallList[index].imgSrc,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Hero(
+                            tag: trendingWallList[index].imgSrc,
+                            child: Container(
+                              width: 50.0,
+                              height: 800.0,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20.0),
+                                color: bgColor,
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20.0),
+                                child: Image.network(
+                                  width: 50.0,
+                                  height: 800.0,
+                                  fit: BoxFit.cover,
+                                  trendingWallList[index].imgSrc,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }

@@ -24,10 +24,14 @@ class _SearchScreenState extends State<SearchScreen> {
   //**
   late List<PhotosModel> searchResults = [];
 
+  bool isLoading = true;
+
   //?? get search Results ->
   getSearchResults() async {
     searchResults = await ApiServices.searchWallpapers(widget.query);
-    setState(() {});
+    setState(() {
+      isLoading = false;
+    });
   }
 
   //?? init state ->
@@ -39,9 +43,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //** media query ->
-    final size = MediaQuery.of(context).size;
-
     return Scaffold(
       appBar: AppBar(
         title: appName(),
@@ -49,67 +50,72 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
 
       //?? body ->
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            //** search bar ->
-            SearchBar(),
+      body: isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  //** search bar ->
+                  SearchBar(),
 
-            //?? grid view for showing wallpaper ->
-            Padding(
-              padding: const EdgeInsets.only(top: 20.0),
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 13.0),
-                height: 690,
-                child: GridView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisExtent: 420.0,
-                    crossAxisSpacing: 15.0,
-                    mainAxisSpacing: 10.0,
-                  ),
-                  itemCount: searchResults.length,
-                  itemBuilder: (context, index) => GridTile(
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ImageFullScreen(
-                              imgUrl: searchResults[index].imgSrc,
-                            ),
-                          ),
-                        );
-                      },
-                      child: Hero(
-                        tag: searchResults[index].imgSrc,
-                        child: Container(
-                          width: 50.0,
-                          height: 800.0,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20.0),
-                            color: bgColor,
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(20.0),
-                            child: Image.network(
-                              width: 50.0,
-                              height: 800.0,
-                              fit: BoxFit.cover,
-                              searchResults[index].imgSrc,
+                  //?? grid view for showing wallpaper ->
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 13.0),
+                      height: 690,
+                      child: GridView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisExtent: 420.0,
+                          crossAxisSpacing: 15.0,
+                          mainAxisSpacing: 10.0,
+                        ),
+                        itemCount: searchResults.length,
+                        itemBuilder: (context, index) => GridTile(
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ImageFullScreen(
+                                    imgUrl: searchResults[index].imgSrc,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Hero(
+                              tag: searchResults[index].imgSrc,
+                              child: Container(
+                                width: 50.0,
+                                height: 800.0,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  color: bgColor,
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  child: Image.network(
+                                    width: 50.0,
+                                    height: 800.0,
+                                    fit: BoxFit.cover,
+                                    searchResults[index].imgSrc,
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }
